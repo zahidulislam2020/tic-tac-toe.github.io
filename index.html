@@ -9,7 +9,12 @@
   </head>
   <body>
     <h1>Tic Tac Toe</h1>
-    <h3 class="advice">Refresh the page to start a new game</h3>
+    <!-- <div class="overlay-trigger"></div> -->
+    <div class="controlUnit">
+      <h4 class="advice">Refresh Page To Reset Game</h4>
+      <span class="pc">Computer Mode: <button class="mode">OFF</button></span>
+      <span class="blinkingLight">.</span>
+    </div>
     <div class="grid-container">
       <div class="grid-item item-1"></div>
       <div class="grid-item item-2"></div>
@@ -24,8 +29,10 @@
     <div class="message">
       <div class="greeting">Congratulation!</div>
       <div class="anouncement"></div>
+      <button class="playAgain">Play Again</button>
     </div>
 
     <script src="./app.js"></script>
+    <!-- <script type="module" src="./main.js"></script> -->
   </body>
 </html>
