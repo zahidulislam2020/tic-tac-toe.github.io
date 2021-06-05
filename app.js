@@ -8,6 +8,9 @@ const greeting = document.querySelector(".greeting");
 //const overlay = document.querySelector(".overlay-trigger");
 const playAgain = document.querySelector(".playAgain");
 const gameReset = document.querySelector(".advice");
+let X_score = document.querySelector(".X-score");
+let O_score = document.querySelector(".O-score");
+let tie_score = document.querySelector(".tie-score");
 
 
 const blocksArray = Array.from(blocks);
@@ -19,6 +22,9 @@ const computerModeBtn = document.querySelector(".mode");
 let isOn = false;
 let stopId;
 let stopIdforLight;
+let score_for_X = 0
+let score_for_O = 0
+let score_for_tie = 0
 
 // AI on-off switch
 computerModeBtn.addEventListener("click", OnOffFunc);
@@ -182,6 +188,8 @@ function winnerX(block, index, winingPoint) {
     if (winX === true) {
       countForTie++;
       messageFunc("X");
+      score_for_X++
+      X_score.innerText = score_for_X
       break;
     }
   }
@@ -201,6 +209,8 @@ function winnerO(block, index, winingPoint) {
     }
     if (winO === true) {
       messageFunc("O");
+      score_for_O++
+      O_score.innerText = score_for_O
       break;
     }
   }
@@ -212,6 +222,8 @@ function winnerO(block, index, winingPoint) {
 function tieGame(countForTie) {
   if (countForTie === 9) {
     messageFunc("tied");
+    score_for_tie++
+    tie_score.innerText = score_for_tie
   }
 }
 
@@ -235,16 +247,20 @@ function AI_action(block, index) {
     }
     if (!isLightRed) {
       redLight.style.color = "red";
+      redLight.style.textShadow = '50px 50px 100px red';
       isLightRed = true;
     } else if (isLightRed) {
       redLight.style.color = "black";
+      redLight.style.textShadow = '0px 0px 2px rgba(255, 255, 255, 0.452)';
       isLightRed = false;
     }
   }
+  
 
   function timeFunc() {
     clearInterval(stopIdforLight);
     redLight.style.color = "black";
+    redLight.style.textShadow = '0px 0px 2px rgba(255, 255, 255, 0.452)';
     board.style.pointerEvents = "auto";
     for(let i = 0; i < blocksArray.length; i++) {
       if(blocksArray[i].innerHTML !== 'X' && blocksArray[i].innerHTML !== 'O') {
@@ -429,7 +445,7 @@ function setps_for__level_3(winingPoint, array, index) {
 /////////////// Complete - Difficulty level-3 for Human /////////////////////
 
 function play_again_with_AI() {
-  console.log('AI started')
+  //console.log('AI started')
   playAgain.removeEventListener('click', play_again_with_human)
   isOn = true
   randomActivityArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -479,6 +495,9 @@ function common_property_to_reset() {
 gameReset.addEventListener('click', reset_game)
 
 function reset_game() {
+  X_score.innerText = 0
+  O_score.innerText = 0
+  tie_score.innerText = 0
   clearInterval(stopIdforLight);
   clearTimeout(stopId);
   common_property_to_reset()
@@ -493,11 +512,11 @@ function human_or_AI() {
     playAgain.removeEventListener("click", play_again_with_AI);
     playAgain.addEventListener('click', play_again_with_human);
     
-    console.log('human')
+    //console.log('human')
   }else {
     playAgain.removeEventListener('click', play_again_with_human);
     playAgain.addEventListener("click", play_again_with_AI);
     
-    console.log('AI')
+    //console.log('AI')
   }
 }
