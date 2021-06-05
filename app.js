@@ -5,8 +5,10 @@ const blocks = document.querySelectorAll(".grid-item");
 const message = document.querySelector(".message");
 const anouncement = document.querySelector(".anouncement");
 const greeting = document.querySelector(".greeting");
-const overlay = document.querySelector(".overlay-trigger");
+//const overlay = document.querySelector(".overlay-trigger");
 const playAgain = document.querySelector(".playAgain");
+const gameReset = document.querySelector(".advice");
+
 
 const blocksArray = Array.from(blocks);
 
@@ -20,20 +22,22 @@ let stopIdforLight;
 
 // AI on-off switch
 computerModeBtn.addEventListener("click", OnOffFunc);
-playAgain.addEventListener("click", play_again);
-
-function play_again() {
-  location.reload();
-}
 
 function OnOffFunc() {
   if (!isOn) {
     computerModeBtn.innerHTML = "ON";
-    computerModeBtn.style.color = "green";
+    computerModeBtn.style.color = "rgb(1, 255, 1)";
+    computerModeBtn.style.boxShadow = '0px 0px 10px 2px rgb(1, 255, 1)';
+    computerModeBtn.style.border = 'auto';
+    computerModeBtn.style.fontWeight = '100';
+    human_or_AI()
     isOn = true;
   } else {
     computerModeBtn.innerHTML = "OFF";
-    computerModeBtn.style.color = "goldenrod";
+    computerModeBtn.style.color = "rgb(255, 205, 79)";
+    computerModeBtn.style.boxShadow = 'none';
+    computerModeBtn.style.border = '1px solid rgba(255, 255, 255, 0.3)';
+    human_or_AI()
     isOn = false;
   }
 }
@@ -41,7 +45,7 @@ function OnOffFunc() {
 ///////////////////////////////////////////////////////////
 
 let isItFirstClick = true;
-let stepCount = 0;
+//let stepCount = 0;
 let winingPossition = [
   [0, 1, 2],
   [3, 4, 5],
@@ -53,13 +57,11 @@ let winingPossition = [
   [2, 4, 6],
 ];
 
-let [a1, a2, a3, b1, b2, b3, c1, c2] = winingPossition;
-
 //history should be used later on
 
-let historyOfXAndO = [];
-let historyOfX = [];
-let historyOfO = [];
+//let historyOfXAndO = [];
+//let historyOfX = [];
+//let historyOfO = [];
 
 const actionToClick = (e, i) => {
   let block = e.target;
@@ -81,12 +83,16 @@ blocksArray.map((block, i) =>
 function turnOfXOrO(block) {
   if (isOn) {
     block.innerHTML = "X";
+    computerModeBtn.style.pointerEvents = 'none'
   } else {
     if (isItFirstClick) {
       block.innerHTML = "X";
+      computerModeBtn.style.pointerEvents = 'none'
       isItFirstClick = false;
     } else {
       block.innerHTML = "O";
+      //playAgain.removeEventListener("click", play_again_with_AI);
+      //playAgain.addEventListener('click', play_again_with_human)
       block.style.color = "red";
       isItFirstClick = true;
     }
@@ -97,24 +103,41 @@ function turnOfXOrO(block) {
 
 // Message Function
 
-function messageFunc(player) {
+async function messageFunc(player) {
   if (player === "tied") {
     board.style.pointerEvents = "none";
-    //overlay.classList.add('overlay')
+    message.classList.add('message')
+    playAgain.style.display = 'inline-block'
     anouncement.innerHTML = `The game is ${player}!`;
+    greeting.classList.add('greeting')
     greeting.innerHTML = "Try again!";
     message.style.animationPlayState = "running";
+    for(let i = 0; i < blocksArray.length; i++) {
+      if(blocksArray[i].innerHTML !== 'X' && blocksArray[i].innerHTML !== 'O') {
+        blocksArray[i].style.pointerEvents = "none";
+      }
+    }
     clearInterval(stopIdforLight);
     clearTimeout(stopId);
     isOn = false;
+    human_or_AI()
   } else {
     board.style.pointerEvents = "none";
-    //overlay.classList.add('overlay')
+    message.classList.add('message')
+    greeting.classList.add('greeting')
+    playAgain.style.display = 'inline-block'
+    greeting.innerHTML = 'Congratulation!';
     anouncement.innerHTML = `Player ${player} won the game!`;
     message.style.animationPlayState = "running";
+    for(let i = 0; i < blocksArray.length; i++) {
+      if(blocksArray[i].innerHTML !== 'X' && blocksArray[i].innerHTML !== 'O') {
+        blocksArray[i].style.pointerEvents = "none";
+      }
+    }
     clearInterval(stopIdforLight);
     clearTimeout(stopId);
     isOn = false;
+    human_or_AI()
   }
 }
 
@@ -196,28 +219,38 @@ function tieGame(countForTie) {
 
 // AI development
 
-const greenLight = document.querySelector(".blinkingLight");
+const redLight = document.querySelector(".blinkingLight");
 
 function AI_action(block, index) {
-  let stopId = setTimeout(timeFunc, 3000);
-  let stopIdforLight = setInterval(timeFuncForLight, 500);
-  let isLightGreen = false;
+  stopId = setTimeout(timeFunc, 2000);
+  stopIdforLight = setInterval(timeFuncForLight, 150);
+  let isLightRed = false;
 
   function timeFuncForLight() {
     board.style.pointerEvents = "none";
-    if (!isLightGreen) {
-      greenLight.style.color = "goldenrod";
-      isLightGreen = true;
-    } else if (isLightGreen) {
-      greenLight.style.color = "white";
-      isLightGreen = false;
+    for(let i = 0; i < blocksArray.length; i++) {
+      if(blocksArray[i].innerHTML !== 'X' && blocksArray[i].innerHTML !== 'O') {
+        blocksArray[i].style.pointerEvents = "none";
+      }
+    }
+    if (!isLightRed) {
+      redLight.style.color = "red";
+      isLightRed = true;
+    } else if (isLightRed) {
+      redLight.style.color = "black";
+      isLightRed = false;
     }
   }
 
   function timeFunc() {
     clearInterval(stopIdforLight);
-    greenLight.style.color = "rgb(248, 236, 204)";
+    redLight.style.color = "black";
     board.style.pointerEvents = "auto";
+    for(let i = 0; i < blocksArray.length; i++) {
+      if(blocksArray[i].innerHTML !== 'X' && blocksArray[i].innerHTML !== 'O') {
+        blocksArray[i].style.pointerEvents = "auto";
+      }
+    }
     AI_Logic_Func(block, index);
   }
 }
@@ -314,8 +347,8 @@ function setps_for__level_2(winingPoint, array, randomNum) {
 /////////////// Steps complete for Level-2 /////////////////////
 
 /////////////// Start - Difficulty level-3 for Human /////////////////////
-let flag = 0;
-let flag_1 = 0;
+//let flag = 0;
+//let flag_1 = 0;
 
 function setps_for__level_3(winingPoint, array, index) {
   if (randomActivityArray.indexOf("X") !== 4 && array.includes(4)) {
@@ -394,3 +427,77 @@ function setps_for__level_3(winingPoint, array, index) {
 }
 
 /////////////// Complete - Difficulty level-3 for Human /////////////////////
+
+function play_again_with_AI() {
+  console.log('AI started')
+  playAgain.removeEventListener('click', play_again_with_human)
+  isOn = true
+  randomActivityArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  countForRandom = false;
+  array = null;
+  randomNum = null;
+  common_property_to_reset()
+}
+
+function play_again_with_human() {
+  isOn = false
+  common_property_to_reset()
+}
+
+function common_property_to_reset() {
+  redLight.style.color = "black";
+  //isOn = false;
+  winingPossition = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  computerModeBtn.style.pointerEvents = 'none'
+  winingPoint = [];
+  winX = null;
+  winO = null
+  countForTie = 0;
+  let initPositionOfBlocks = blocksArray.map(e => {
+    e.innerHTML = null
+    e.style.pointerEvents = "auto";
+    e.style.color = 'goldenrod'
+  })
+  board.style.pointerEvents = "auto";
+  anouncement.innerHTML = null;
+  greeting.innerHTML = null;
+  greeting.classList.remove('greeting')
+  message.style.animationPlayState = "paused";
+  message.classList.remove('message')
+  playAgain.style.display = 'none'
+}
+
+gameReset.addEventListener('click', reset_game)
+
+function reset_game() {
+  clearInterval(stopIdforLight);
+  clearTimeout(stopId);
+  common_property_to_reset()
+  isOn = true
+  computerModeBtn.style.pointerEvents = 'auto'
+  OnOffFunc()
+}
+
+
+function human_or_AI() {
+  if(computerModeBtn.innerHTML === 'OFF') {
+    playAgain.removeEventListener("click", play_again_with_AI);
+    playAgain.addEventListener('click', play_again_with_human);
+    
+    console.log('human')
+  }else {
+    playAgain.removeEventListener('click', play_again_with_human);
+    playAgain.addEventListener("click", play_again_with_AI);
+    
+    console.log('AI')
+  }
+}
